@@ -50,3 +50,4 @@
 ;(unpin! t)
 
 (package! lsp-origami)
+(package! polymode)
