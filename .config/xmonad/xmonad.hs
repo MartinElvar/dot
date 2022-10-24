@@ -115,10 +115,10 @@ myStartupHook = do
   spawn "/usr/bin/emacs --daemon" -- emacs daemon for the emacsclient
 
   spawn ("sleep 2 && conky")
-  spawn ("sleep 2 && trayer --edge top --align right --widthtype request --padding 4 --SetDockType true --SetPartialStrut true --expand true --monitor 1 --transparent true --alpha 0 " ++ colorTrayer ++ " --height 22")
+  spawn ("sleep 2 && trayer --edge top --align right --widthtype request --padding 4 --SetDockType true --SetPartialStrut true --expand true --monitor primary --transparent true --alpha 0 " ++ colorTrayer ++ " --height 22")
 
-  spawnOnce "sleep 2 && ~/.fehbg &"  -- set last saved feh wallpaper
-  spawnOnce "setxkbmap -layout us -variant mac -option caps:super"
+  spawn "sleep 1 && ~/.fehbg &"  -- set last saved feh wallpaper
+  spawn "setxkbmap -layout us -variant mac -option caps:super"
   setWMName "LG3D"
 
 myNavigation :: TwoD a (Maybe a)
@@ -338,23 +338,6 @@ monocle  = renamed [Replace "monocle"]
 floats   = renamed [Replace "floats"]
            $ smartBorders
            $ simplestFloat
-grid     = renamed [Replace "grid"]
-           $ limitWindows 9
-           $ smartBorders
-           $ windowNavigation
-           $ addTabs shrinkText myTabTheme
-           $ subLayout [] (smartBorders Simplest)
-           $ mySpacing 8
-           $ mkToggle (single MIRROR)
-           $ Grid (16/10)
-spirals  = renamed [Replace "spirals"]
-           $ limitWindows 9
-           $ smartBorders
-           $ windowNavigation
-           $ addTabs shrinkText myTabTheme
-           $ subLayout [] (smartBorders Simplest)
-           $ mySpacing' 8
-           $ spiral (6/7)
 threeCol = renamed [Replace "threeCol"]
            $ limitWindows 7
            $ smartBorders
@@ -366,8 +349,6 @@ tabs     = renamed [Replace "tabs"]
            -- I cannot add spacing to this layout because it will
            -- add spacing between window and tabs which looks bad.
            $ tabbed shrinkText myTabTheme
-tallAccordion  = renamed [Replace "tallAccordion"]
-           $ Accordion
 
 -- setting colors for tabs layout and tabs sublayout.
 myTabTheme = def { fontName            = myFont
@@ -397,12 +378,8 @@ myLayoutHook = avoidStruts
   where
     myDefaultLayout = withBorder myBorderWidth tall
                                            ||| noBorders monocle
-                                           ||| floats
                                            ||| noBorders tabs
-                                           ||| grid
-                                           ||| spirals
                                            ||| threeCol
-                                           ||| tallAccordion
 
 -- myWorkspaces = [" 1 ", " 2 ", " 3 ", " 4 ", " 5 ", " 6 "]
 myWorkspaces = [" dev ", " www ", " coms ", " doc ", " mus ", " etc " ]
@@ -615,7 +592,6 @@ myKeys c =
   , ("M-e b", addName "Emacsclient Ibuffer"      $ spawn (myEmacs ++ ("--eval '(ibuffer)'")))
   , ("M-e d", addName "Emacsclient Dired"        $ spawn (myEmacs ++ ("--eval '(dired nil)'")))
   , ("M-e i", addName "Emacsclient ERC (IRC)"    $ spawn (myEmacs ++ ("--eval '(erc)'")))
-  , ("M-e n", addName "Emacsclient Elfeed (RSS)" $ spawn (myEmacs ++ ("--eval '(elfeed)'")))
   , ("M-e s", addName "Emacsclient Eshell"       $ spawn (myEmacs ++ ("--eval '(eshell)'")))
   , ("M-e v", addName "Emacsclient Vterm"        $ spawn (myEmacs ++ ("--eval '(+vterm/here nil)'")))
   , ("M-e w", addName "Emacsclient EWW Browser"  $ spawn (myEmacs ++ ("--eval '(doom/window-maximize-buffer(eww \"distro.tube\"))'")))]
@@ -644,7 +620,7 @@ main :: IO ()
 main = do
   -- Launching three instances of xmobar on their monitors.
   xmproc0 <- spawnPipe ("xmobar -x 0 $HOME/.config/xmobar/xmobarrc.hs")
-  xmproc1 <- spawnPipe ("xmobar -x 1 $HOME/.config/xmobar/xmobarrc.hs")
+  xmproc1 <- spawnPipe ("xmobar -x 1 $HOME/.config/xmobar/xmobarrc-2.hs")
   -- xmproc2 <- spawnPipe ("xmobar -x 2 $HOME/.config/xmobar/" ++ colorScheme ++ "-xmobarrc")
   -- the xmonad, ya know...what the WM is named after!
   xmonad $ addDescrKeys' ((mod4Mask, xK_F1), showKeybindings) myKeys $ ewmh $ docks $ def
